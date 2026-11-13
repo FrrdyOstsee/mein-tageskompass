@@ -1,1 +1,507 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#104b7b"><title>Mein Tageskompass</title><link rel="manifest" href="manifest.webmanifest"><style>body{margin:0;background:#e9f1f8;color:#17324c;font:17px system-ui,Arial}header{background:linear-gradient(140deg,#084779,#2588ba);color:white;padding:28px 18px 24px;text-align:center}h1{margin:0;font-size:29px}header p{margin:6px}main{max-width:650px;margin:auto;padding:15px}.panel{background:white;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 3px 12px #1232}h2{font-size:21px;margin:0 0 14px}.date{display:flex;align-items:center;justify-content:space-between;gap:8px}.date button,button{border:0;border-radius:10px;padding:12px 15px;background:#176fa6;color:white;font-weight:700;font-size:16px}.date input{font:inherit;max-width:180px;border:1px solid #ccd;border-radius:9px;padding:8px}.habit{display:flex;align-items:center;gap:12px;padding:12px 3px;border-bottom:1px solid #e5eaf0}.habit:last-child{border:0}.emoji{font-size:26px;width:36px;text-align:center}.habit label{flex:1}.habit small{display:block;color:#5e7384;font-size:13px}.habit input{width:29px;height:29px;accent-color:#22963a}.save{width:100%;background:#288b30;margin-top:15px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{border-radius:12px;background:#eaf5fc;padding:13px;text-align:center}.stat strong{font-size:28px;color:#116aa0;display:block}.stat small{font-size:13px}.note{width:100%;box-sizing:border-box;min-height:70px;border:1px solid #ccd;border-radius:10px;padding:10px;font:inherit}#status{color:#16753b;font-weight:bold}footer{font-size:12px;text-align:center;color:#627484;padding:15px}nav{display:flex;gap:8px;justify-content:center}nav a{color:#116a9a;text-decoration:none;font-weight:bold;padding:10px}</style></head><body><header><h1>🧭 Mein Tageskompass</h1><p>Gesundheit · Gewohnheiten · Fortschritt</p></header><main><section class="panel"><div class="date"><button id="prev" aria-label="Vortag">‹</button><input type="date" id="day" aria-label="Datum"><button id="next" aria-label="Folgetag">›</button></div></section><nav><a href="#today">Heute</a><a href="#progress">Fortschritt</a></nav><section class="panel" id="today"><h2>Meine Tagesziele</h2><div id="habits"></div><label for="note">Meine Tagesnotiz</label><textarea class="note" id="note" placeholder="Wie ging es mir heute?"></textarea><button class="save" id="save">✓ Tagesplan speichern</button><p id="status" role="status"></p></section><section class="panel" id="progress"><h2>🏆 Mein Fortschritt</h2><p>Aktuelle Serie bis zum zuletzt abgeschlossenen Tag (heute zählt nur, wenn abgehakt):</p><div class="stats" id="stats"></div><p style="font-size:14px">Ein nicht eingetragener Tag zählt nicht als Erfolg. Frühere Erfolge bleiben erhalten.</p></section><section class="panel"><h2>🔐 Deine Daten</h2><p>Alle Einträge bleiben zunächst nur in diesem Browser auf diesem Gerät. Sichere deine Daten regelmäßig.</p><button id="export">Datensicherung herunterladen</button> <button id="importButton">Datensicherung einlesen</button><input type="file" id="import" accept="application/json" hidden></section></main><footer>Version 0.1 · Privatprototyp · Keine Cloud-Synchronisierung</footer><script>const habits=[['smoke','🚭','Nicht geraucht','Heute keine Zigarette'],['alcohol','🍷','Kein Alkohol','Heute alkoholfrei'],['coffee','☕','Kein Kaffee','Heute keinen Kaffee'],['move','🏃','Bewegung / Sport','Heute aktiv gewesen'],['water','💧','Genug getrunken','Mein persönliches Trinkziel erreicht'],['food','🍎','Bewusst gegessen','Heute ausgewogen gegessen'],['sleep','🛏️','Gut geschlafen','Mein persönliches Schlafziel erreicht']];const key='tageskompass_v1';let data={};try{data=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}const el=id=>document.getElementById(id),iso=d=>{let x=new Date(d.getTime()-d.getTimezoneOffset()*60000);return x.toISOString().slice(0,10)},today=iso(new Date());el('day').value=today;el('day').max=today;el('habits').innerHTML=habits.map(([k,icon,label,sub])=>`<div class="habit"><span class="emoji">${icon}</span><label for="h_${k}"><b>${label}</b><small>${sub}</small></label><input type="checkbox" id="h_${k}"></div>`).join('');function load(){let x=data[el('day').value]||{};habits.forEach(([k])=>el('h_'+k).checked===undefined?null:el('h_'+k).checked=!!x[k]);el('note').value=x.note||'';el('status').textContent='';stats()}function stats(){let out='';for(let [k,icon,label] of habits){let streak=0,record=0,run=0,success=0;let d=new Date(today+'T12:00:00');for(let i=0;i<3650;i++){let ds=iso(d);if(data[ds]?.[k])streak++;else if(ds!==today)break;d.setDate(d.getDate()-1)}let dates=Object.keys(data).sort();let prev='';for(let ds of dates){if(!data[ds][k]){run=0;continue}success++;let p=new Date(ds+'T12:00:00');p.setDate(p.getDate()-1);run=prev===iso(p)?run+1:1;record=Math.max(record,run);prev=ds}out+=`<div class="stat"><div>${icon} ${label}</div><strong>${streak} Tage</strong><small>Rekord: ${record} · Insgesamt: ${success}</small></div>`}el('stats').innerHTML=out}el('save').onclick=()=>{let ds=el('day').value;if(ds>today){el('status').textContent='Zukünftige Tage können nicht gespeichert werden.';return}let x={note:el('note').value};habits.forEach(([k])=>x[k]=el('h_'+k).checked);data[ds]=x;try{localStorage.setItem(key,JSON.stringify(data));el('status').textContent='✓ Gespeichert!'}catch(e){el('status').textContent='Speichern fehlgeschlagen. Bitte Speicherplatz prüfen.'}stats()};el('day').onchange=load;for(let [id,delta] of [['prev',-1],['next',1]])el(id).onclick=()=>{let d=new Date(el('day').value+'T12:00:00');d.setDate(d.getDate()+delta);if(iso(d)>today)return;el('day').value=iso(d);load()};el('export').onclick=()=>{let blob=new Blob([JSON.stringify({version:1,entries:data},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mein-tageskompass-sicherung.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};el('importButton').onclick=()=>el('import').click();el('import').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(obj.version!==1||!obj.entries||Array.isArray(obj.entries)||typeof obj.entries!=='object')throw Error();if(!confirm('Vorhandene Einträge mit der Sicherung zusammenführen? Gleiche Tage werden überschrieben.'))return;data={...data,...obj.entries};localStorage.setItem(key,JSON.stringify(data));load();alert('Sicherung eingelesen.')}catch(e){alert('Ungültige Sicherungsdatei.')}};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});load();</script></body></html>
+
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#104b7b">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Mein Tageskompass</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#e9f1f8;color:#17324c;font:17px system-ui,Arial}
+header{background:linear-gradient(140deg,#084779,#2588ba);color:white;padding:27px 16px;text-align:center}
+h1{margin:0;font-size:29px}
+header p{margin:8px 0 0}
+main{max-width:680px;margin:auto;padding:14px}
+.panel{background:white;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 3px 12px #1232}
+h2{font-size:21px;margin:0 0 14px}
+button{border:0;border-radius:10px;padding:12px 15px;background:#176fa6;color:white;font-weight:700;font-size:16px;cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #f0ad30}
+.date,.monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.date input{font:inherit;min-width:0;max-width:185px;border:1px solid #ccd;border-radius:9px;padding:8px}
+nav{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+nav a{color:#116a9a;text-decoration:none;font-weight:bold;padding:9px}
+.habit{display:flex;align-items:center;gap:12px;padding:12px 3px;border-bottom:1px solid #e5eaf0}
+.habit:last-child{border:0}
+.emoji{font-size:26px;width:36px;text-align:center}
+.habit label{flex:1}
+.habit small{display:block;color:#5e7384;font-size:13px}
+.habit input{width:29px;height:29px;accent-color:#22963a}
+.note{width:100%;min-height:75px;border:1px solid #ccd;border-radius:10px;padding:10px;font:inherit}
+.save{width:100%;background:#288b30;margin-top:15px}
+#status{color:#16753b;font-weight:bold;min-height:1.5em}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{border-radius:12px;background:#eaf5fc;padding:13px;text-align:center}
+.stat strong{font-size:28px;color:#116aa0;display:block;margin:7px 0}
+.stat small{font-size:13px;line-height:1.5}
+.monthbar strong{font-size:19px;text-align:center}
+.weekdays,.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.weekdays{margin-top:18px;text-align:center;font-size:13px;font-weight:bold;color:#5e7384}
+.calendar{margin-top:7px}
+.calday{background:#eef3f7;color:#17324c;padding:8px 2px;min-height:55px;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:15px}
+.calday.saved{background:#dff3e5}
+.calday.selected{border-color:#176fa6}
+.calday.today{box-shadow:inset 0 0 0 2px #e3a22b}
+.calday.future{opacity:.35}
+.calday small{font-size:11px;font-weight:normal}
+.calday.blank{visibility:hidden}
+.legend{font-size:13px;color:#5e7384;margin-top:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions button{flex:1;min-width:170px}
+footer{font-size:12px;text-align:center;color:#627484;padding:15px}
+@media(max-width:430px){
+  main{padding:10px}
+  .panel{padding:14px}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat{padding:10px 5px}
+  .stat strong{font-size:24px}
+  .calday{min-height:47px;padding:5px 1px;font-size:14px}
+  .calday small{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧭 Mein Tageskompass</h1>
+  <p>Gesundheit · Gewohnheiten · Fortschritt</p>
+</header>
+
+<main>
+<section class="panel">
+  <div class="date">
+    <button id="prev" aria-label="Vortag">‹</button>
+    <input type="date" id="day" aria-label="Datum">
+    <button id="next" aria-label="Folgetag">›</button>
+  </div>
+</section>
+
+<nav>
+  <a href="#today">Heute</a>
+  <a href="#calendarSection">Kalender</a>
+  <a href="#progress">Erfolge</a>
+</nav>
+
+<section class="panel" id="today">
+  <h2>🌱 Meine Tagesziele</h2>
+  <div id="habits"></div>
+  <p><label for="note">Meine Tagesnotiz</label></p>
+  <textarea class="note" id="note"
+    placeholder="Wie ging es mir heute?"></textarea>
+  <button class="save" id="save">✓ Tagesplan speichern</button>
+  <p id="status" role="status"></p>
+</section>
+
+<section class="panel" id="calendarSection">
+  <h2>📅 Mein Monatskalender</h2>
+  <div class="monthbar">
+    <button id="monthPrev" aria-label="Vorheriger Monat">‹</button>
+    <strong id="monthTitle"></strong>
+    <button id="monthNext" aria-label="Nächster Monat">›</button>
+  </div>
+  <div class="weekdays">
+    <span>Mo</span><span>Di</span><span>Mi</span>
+    <span>Do</span><span>Fr</span><span>Sa</span><span>So</span>
+  </div>
+  <div class="calendar" id="calendar"></div>
+  <p class="legend">
+    🟩 Mindestens ein Ziel erreicht ·
+    Blau umrandet: ausgewählter Tag ·
+    Gold umrandet: heute
+  </p>
+  <p class="legend">
+    Tippe auf einen vergangenen Tag, um seine Einträge anzusehen
+    oder nachzutragen.
+  </p>
+</section>
+
+<section class="panel" id="progress">
+  <h2>🏆 Meine Erfolge und Rekorde</h2>
+  <p>Deine Erfolge werden aus den gespeicherten Tageszielen berechnet.</p>
+  <div class="stats" id="stats"></div>
+  <p class="legend">
+    Aktuelle Serie: aufeinanderfolgende Erfolgstage bis heute
+    oder gestern. Nicht eingetragene Tage zählen nicht als Erfolg.
+    Frühere Rekorde bleiben erhalten.
+  </p>
+</section>
+
+<section class="panel">
+  <h2>🔐 Meine Daten</h2>
+  <p>
+    Deine Einträge bleiben in diesem Browser auf diesem Gerät.
+    Es gibt keine automatische Cloud-Synchronisierung.
+    Sichere deine Daten regelmäßig.
+  </p>
+  <div class="actions">
+    <button id="export">Datensicherung herunterladen</button>
+    <button id="importButton">Datensicherung einlesen</button>
+  </div>
+  <input type="file" id="import" accept=".json,application/json" hidden>
+</section>
+</main>
+
+<footer>Version 0.2 · Privatprototyp · Keine Cloud-Synchronisierung</footer>
+
+<script>
+"use strict";
+
+const habits = [
+  ["smoke","🚭","Nicht geraucht","Heute keine Zigarette"],
+  ["alcohol","🍷","Kein Alkohol","Heute alkoholfrei"],
+  ["coffee","☕","Kein Kaffee","Heute keinen Kaffee"],
+  ["move","🏃","Bewegung / Sport","Heute aktiv gewesen"],
+  ["water","💧","Genug getrunken","Mein persönliches Trinkziel erreicht"],
+  ["food","🍎","Bewusst gegessen","Heute ausgewogen gegessen"],
+  ["sleep","🛏️","Gut geschlafen","Mein persönliches Schlafziel erreicht"]
+];
+
+// Gleicher Speichername wie Version 0.1!
+const key = "tageskompass_v1";
+const el = id => document.getElementById(id);
+
+let data = {};
+try {
+  const stored = JSON.parse(localStorage.getItem(key) || "{}");
+  if (stored && typeof stored === "object" && !Array.isArray(stored)) {
+    data = stored;
+  }
+} catch (error) {
+  console.warn("Gespeicherte Daten konnten nicht gelesen werden.");
+}
+
+function iso(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2,"0");
+  const d = String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+
+function fromIso(value) {
+  return new Date(value + "T12:00:00");
+}
+
+function shiftDate(value, days) {
+  const d = fromIso(value);
+  d.setDate(d.getDate() + days);
+  return iso(d);
+}
+
+function today() {
+  return iso(new Date());
+}
+
+let selectedDay = today();
+let visibleMonth = new Date(
+  fromIso(selectedDay).getFullYear(),
+  fromIso(selectedDay).getMonth(),
+  1
+);
+
+el("habits").innerHTML = habits.map(([k,icon,label,sub]) => `
+  <div class="habit">
+    <span class="emoji">${icon}</span>
+    <label for="h_${k}">
+      <b>${label}</b>
+      <small>${sub}</small>
+    </label>
+    <input type="checkbox" id="h_${k}">
+  </div>
+`).join("");
+
+function selectDay(value) {
+  if (!value || value > today()) return;
+  selectedDay = value;
+  visibleMonth = new Date(
+    fromIso(value).getFullYear(),
+    fromIso(value).getMonth(),
+    1
+  );
+  load();
+}
+
+function load() {
+  const entry = data[selectedDay] || {};
+  el("day").value = selectedDay;
+  el("day").max = today();
+
+  habits.forEach(([k]) => {
+    el("h_" + k).checked = !!entry[k];
+  });
+
+  el("note").value = entry.note || "";
+  el("status").textContent = "";
+  el("next").disabled = selectedDay >= today();
+
+  renderCalendar();
+  renderStats();
+}
+
+function hasSuccess(dateString) {
+  const entry = data[dateString];
+  return !!entry && habits.some(([k]) => !!entry[k]);
+}
+
+function renderCalendar() {
+  const year = visibleMonth.getFullYear();
+  const month = visibleMonth.getMonth();
+
+  el("monthTitle").textContent =
+    visibleMonth.toLocaleDateString("de-DE", {
+      month:"long",
+      year:"numeric"
+    });
+
+  const first = new Date(year, month, 1);
+  const offset = (first.getDay() + 6) % 7;
+  const days = new Date(year, month + 1, 0).getDate();
+
+  const maxMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+  el("monthNext").disabled = visibleMonth >= maxMonth;
+
+  const grid = el("calendar");
+  grid.innerHTML = "";
+
+  for (let i = 0; i < offset; i++) {
+    const blank = document.createElement("span");
+    blank.className = "calday blank";
+    grid.appendChild(blank);
+  }
+
+  for (let day = 1; day <= days; day++) {
+    const ds = iso(new Date(year, month, day));
+    const entry = data[ds];
+    const count = entry
+      ? habits.filter(([k]) => !!entry[k]).length
+      : 0;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "calday";
+
+    if (count > 0) button.classList.add("saved");
+    if (ds === selectedDay) button.classList.add("selected");
+    if (ds === today()) button.classList.add("today");
+
+    if (ds > today()) {
+      button.disabled = true;
+      button.classList.add("future");
+    }
+
+    const number = document.createElement("span");
+    number.textContent = day;
+    button.appendChild(number);
+
+    if (count > 0) {
+      const small = document.createElement("small");
+      small.textContent = `${count} ✓`;
+      button.appendChild(small);
+    }
+
+    button.setAttribute(
+      "aria-label",
+      `${day}. ${month + 1}. ${year}, ${count} erreichte Ziele`
+    );
+
+    button.addEventListener("click", () => {
+      selectDay(ds);
+      el("today").scrollIntoView({behavior:"smooth"});
+    });
+
+    grid.appendChild(button);
+  }
+}
+
+function calculateStats(habitKey) {
+  const end = today();
+  const yesterday = shiftDate(end,-1);
+
+  let streak = 0;
+  let cursor = data[end]?.[habitKey] ? end : yesterday;
+
+  // Aktuelle Serie: heute oder gestern als Ausgangspunkt.
+  for (let i = 0; i < 36500; i++) {
+    if (!data[cursor]?.[habitKey]) break;
+    streak++;
+    cursor = shiftDate(cursor,-1);
+  }
+
+  let total = 0;
+  let record = 0;
+  let run = 0;
+  let previousSuccess = null;
+
+  const dates = Object.keys(data)
+    .filter(ds => /^\d{4}-\d{2}-\d{2}$/.test(ds) && ds <= end)
+    .sort();
+
+  for (const ds of dates) {
+    if (!data[ds]?.[habitKey]) continue;
+
+    total++;
+    run = previousSuccess === shiftDate(ds,-1)
+      ? run + 1
+      : 1;
+
+    record = Math.max(record,run);
+    previousSuccess = ds;
+  }
+
+  return {streak,record,total};
+}
+
+function renderStats() {
+  const container = el("stats");
+  container.innerHTML = "";
+
+  for (const [k,icon,label] of habits) {
+    const s = calculateStats(k);
+
+    const card = document.createElement("div");
+    card.className = "stat";
+
+    const heading = document.createElement("div");
+    heading.textContent = `${icon} ${label}`;
+
+    const number = document.createElement("strong");
+    number.textContent = `${s.streak} Tage`;
+
+    const details = document.createElement("small");
+    details.textContent =
+      `Rekord: ${s.record} Tage · Insgesamt: ${s.total} Tage`;
+
+    card.append(heading,number,details);
+    container.appendChild(card);
+  }
+}
+
+el("save").addEventListener("click", () => {
+  if (selectedDay > today()) return;
+
+  const entry = {
+    note: el("note").value
+  };
+
+  habits.forEach(([k]) => {
+    entry[k] = el("h_" + k).checked;
+  });
+
+  const previous = data[selectedDay];
+  data[selectedDay] = entry;
+
+  try {
+    localStorage.setItem(key,JSON.stringify(data));
+    el("status").textContent = "✓ Erfolgreich gespeichert!";
+  } catch (error) {
+    if (previous === undefined) {
+      delete data[selectedDay];
+    } else {
+      data[selectedDay] = previous;
+    }
+    el("status").textContent =
+      "Speichern fehlgeschlagen. Bitte Speicherplatz prüfen.";
+  }
+
+  renderCalendar();
+  renderStats();
+});
+
+el("day").addEventListener("change", event => {
+  selectDay(event.target.value);
+});
+
+el("prev").addEventListener("click", () => {
+  selectDay(shiftDate(selectedDay,-1));
+});
+
+el("next").addEventListener("click", () => {
+  selectDay(shiftDate(selectedDay,1));
+});
+
+el("monthPrev").addEventListener("click", () => {
+  visibleMonth.setMonth(visibleMonth.getMonth()-1);
+  renderCalendar();
+});
+
+el("monthNext").addEventListener("click", () => {
+  visibleMonth.setMonth(visibleMonth.getMonth()+1);
+  renderCalendar();
+});
+
+el("export").addEventListener("click", () => {
+  const backup = {
+    version:1,
+    entries:data
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:"application/json"}
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "mein-tageskompass-sicherung.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url),5000);
+});
+
+el("importButton").addEventListener("click", () => {
+  el("import").click();
+});
+
+el("import").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const backup = JSON.parse(await file.text());
+
+    if (
+      backup.version !== 1 ||
+      !backup.entries ||
+      typeof backup.entries !== "object" ||
+      Array.isArray(backup.entries)
+    ) {
+      throw new Error("Ungültiges Sicherungsformat");
+    }
+
+    if (!confirm(
+      "Datensicherung einlesen? Vorhandene Einträge mit gleichem Datum werden überschrieben."
+    )) {
+      return;
+    }
+
+    const merged = {...data,...backup.entries};
+    localStorage.setItem(key,JSON.stringify(merged));
+    data = merged;
+    load();
+
+    alert("Datensicherung erfolgreich eingelesen!");
+  } catch (error) {
+    alert("Die Sicherung konnte nicht eingelesen werden.");
+  } finally {
+    event.target.value = "";
+  }
+});
+
+// Vorhandenen Service Worker weiterverwenden.
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(() => {});
+}
+
+load();
+</script>
+</body>
+</html>
