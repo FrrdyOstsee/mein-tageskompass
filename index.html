@@ -13,12 +13,13 @@ body{margin:0;background:#e9f1f8;color:#17324c;font:17px system-ui,Arial}
 header{background:linear-gradient(140deg,#084779,#2588ba);color:white;padding:27px 16px;text-align:center}
 h1{margin:0;font-size:29px}
 header p{margin:8px 0 0}
-main{max-width:680px;margin:auto;padding:14px}
+main{max-width:760px;margin:auto;padding:14px}
 .panel{background:white;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 3px 12px #1232}
 h2{font-size:21px;margin:0 0 14px}
+h3{font-size:17px;margin:16px 0 9px}
 button{border:0;border-radius:10px;padding:12px 15px;background:#176fa6;color:white;font-weight:700;font-size:16px;cursor:pointer}
 button:disabled{opacity:.4;cursor:not-allowed}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #f0ad30}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #f0ad30}
 .date,.monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .date input{font:inherit;min-width:0;max-width:185px;border:1px solid #ccd;border-radius:9px;padding:8px}
 nav{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
@@ -31,7 +32,7 @@ nav a{color:#116a9a;text-decoration:none;font-weight:bold;padding:9px}
 .habit input{width:29px;height:29px;accent-color:#22963a}
 .note{width:100%;min-height:75px;border:1px solid #ccd;border-radius:10px;padding:10px;font:inherit}
 .save{width:100%;background:#288b30;margin-top:15px}
-#status{color:#16753b;font-weight:bold;min-height:1.5em}
+#status,#workStatus{color:#16753b;font-weight:bold;min-height:1.5em}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .stat{border-radius:12px;background:#eaf5fc;padding:13px;text-align:center}
 .stat strong{font-size:28px;color:#116aa0;display:block;margin:7px 0}
@@ -51,24 +52,68 @@ nav a{color:#116a9a;text-decoration:none;font-weight:bold;padding:9px}
 .actions{display:flex;gap:10px;flex-wrap:wrap}
 .actions button{flex:1;min-width:170px}
 footer{font-size:12px;text-align:center;color:#627484;padding:15px}
+.field{display:grid;gap:6px;margin:12px 0}
+.field label{font-weight:700}
+.field select,.field input{font:inherit;padding:11px;border:1px solid #b9cbd9;border-radius:10px;background:white;color:#17324c;width:100%}
+.timer{font-size:44px;font-weight:800;text-align:center;color:#116aa0;font-variant-numeric:tabular-nums;margin:12px 0}
+.timerSub{text-align:center;color:#5e7384;font-size:14px}
+.projectGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.projectCard{background:#edf6fc;padding:13px;border-radius:12px}
+.projectCard strong{display:block;font-size:24px;color:#116aa0;margin:7px 0}
+.projectCard small{font-size:13px;color:#526a7d}
+.bar{height:12px;background:#e2eaf0;border-radius:20px;overflow:hidden;margin:8px 0}
+.barFill{height:100%;background:#2588ba;width:0;transition:width .2s}
+.barFill.art{background:#289a73}
+.barFill.warn{background:#cf7744}
+.workButtons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.workButtons button{min-width:0}
+.green{background:#25843d}
+.orange{background:#bc6c28}
+.gray{background:#617587}
+.workHint{background:#edf6fc;border-left:4px solid #2588ba;border-radius:8px;padding:12px;margin:12px 0;font-size:14px}
+.workHint.warn{background:#fff2e5;border-color:#c77728}
+.workHint.done{background:#e5f5e9;border-color:#25843d}
+.workList{display:grid;gap:8px;margin:10px 0}
+.workItem{padding:10px;background:#f3f7fa;border-radius:9px;font-size:14px}
+.workItem strong{display:block}
+.workItem small{color:#526a7d}
+.summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.summary>div{background:#edf6fc;border-radius:10px;padding:12px}
+.summary strong{display:block;font-size:23px;color:#116aa0}
+.reportTable{width:100%;border-collapse:collapse;font-size:14px}
+.reportTable th,.reportTable td{padding:9px 6px;border-bottom:1px solid #dce5ed;text-align:left}
+.reportTable th:last-child,.reportTable td:last-child{text-align:right}
+.reportTable th{background:#edf6fc}
+.muted{color:#5e7384;font-size:14px}
 @media(max-width:430px){
   main{padding:10px}
   .panel{padding:14px}
-  .stats{grid-template-columns:1fr 1fr}
   .stat{padding:10px 5px}
   .stat strong{font-size:24px}
   .calday{min-height:47px;padding:5px 1px;font-size:14px}
   .calday small{font-size:10px}
+  .timer{font-size:38px}
+  .projectCard strong{font-size:21px}
+  .workButtons button{font-size:14px;padding:12px 7px}
+}
+@media print{
+  body{background:white;color:#111;font:12px Arial}
+  header,nav,.date,#today,#calendarSection,#progress,#workSection,#dataSection,footer,.noPrint{display:none!important}
+  main{max-width:none;padding:0}
+  .panel{box-shadow:none;border:0;padding:0;margin:0}
+  #reportSection{display:block!important}
+  #reportSection h2{font-size:22px}
+  .reportTable{font-size:12px}
+  .reportTable th,.reportTable td{border-color:#aaa}
+  .summary>div{background:#eee}
 }
 </style>
 </head>
 <body>
-
 <header>
   <h1>🧭 Mein Tageskompass</h1>
-  <p>Gesundheit · Gewohnheiten · Fortschritt</p>
+  <p>Gesundheit · Gewohnheiten · Arbeitsbalance</p>
 </header>
-
 <main>
 <section class="panel">
   <div class="date">
@@ -80,18 +125,97 @@ footer{font-size:12px;text-align:center;color:#627484;padding:15px}
 
 <nav>
   <a href="#today">Heute</a>
+  <a href="#workSection">Arbeitszeit</a>
   <a href="#calendarSection">Kalender</a>
   <a href="#progress">Erfolge</a>
+  <a href="#reportSection">Wochenbericht</a>
 </nav>
 
 <section class="panel" id="today">
   <h2>🌱 Meine Tagesziele</h2>
   <div id="habits"></div>
   <p><label for="note">Meine Tagesnotiz</label></p>
-  <textarea class="note" id="note"
-    placeholder="Wie ging es mir heute?"></textarea>
+  <textarea class="note" id="note" placeholder="Wie ging es mir heute?"></textarea>
   <button class="save" id="save">✓ Tagesplan speichern</button>
   <p id="status" role="status"></p>
+</section>
+
+<section class="panel" id="workSection">
+  <h2>⏱️ Meine Arbeitszeit & Balance</h2>
+  <p class="muted">
+    Erfasse deine gesamte Computerarbeit für die Nachbarschaftshilfe
+    und Art Unikate. Auch E-Mails, Social Media, Grafiken, Videos,
+    Newsletter und Recherche gehören dazu.
+  </p>
+
+  <div class="field">
+    <label for="project">Für welches Projekt arbeite ich?</label>
+    <select id="project">
+      <option value="nh">Nachbarschaftshilfe Ostholstein</option>
+      <option value="art">Art Unikate</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="activity">Welche Tätigkeit?</label>
+    <select id="activity">
+      <option value="Webseite / Technik">Webseite / Technik</option>
+      <option value="Social Media">Social Media</option>
+      <option value="Grafiken / Gestaltung">Grafiken / Gestaltung</option>
+      <option value="Videoproduktion">Videoproduktion</option>
+      <option value="E-Mails / Newsletter">E-Mails / Newsletter</option>
+      <option value="Recherche / Planung">Recherche / Planung</option>
+      <option value="Verwaltung / Organisation">Verwaltung / Organisation</option>
+      <option value="Sonstiges">Sonstiges</option>
+    </select>
+  </div>
+
+  <div class="timer" id="timer">00:00:00</div>
+  <div class="timerSub" id="timerInfo">Bereit für deine nächste Arbeitseinheit</div>
+
+  <div class="workButtons">
+    <button id="startWork" class="green">▶ Starten</button>
+    <button id="pauseWork" class="orange">Ⅱ Pause</button>
+    <button id="resumeWork">▶ Fortsetzen</button>
+    <button id="finishWork" class="gray">■ Feierabend</button>
+  </div>
+
+  <p id="workStatus" role="status"></p>
+  <div class="workHint" id="workHint">
+    Dein Tagesziel: maximal 3 Stunden Nachbarschaftshilfe
+    und 1 Stunde Art Unikate – insgesamt 4 Stunden.
+    Das ist eine Orientierung, keine Pflicht.
+  </div>
+
+  <h3>Meine heutige Projektzeit</h3>
+  <div class="projectGrid">
+    <div class="projectCard">
+      <b>Nachbarschaftshilfe</b>
+      <strong id="nhTime">0 Std. 00 Min.</strong>
+      <small>Orientierung: 3 Stunden</small>
+      <div class="bar"><div class="barFill" id="nhBar"></div></div>
+    </div>
+    <div class="projectCard">
+      <b>Art Unikate</b>
+      <strong id="artTime">0 Std. 00 Min.</strong>
+      <small>Orientierung: 1 Stunde</small>
+      <div class="bar"><div class="barFill art" id="artBar"></div></div>
+    </div>
+  </div>
+
+  <h3>Gesamte Computerzeit heute</h3>
+  <div class="summary">
+    <div><span>Bereits gearbeitet</span><strong id="totalWork">0:00</strong></div>
+    <div><span>Bis zum Tagesziel</span><strong id="remainingWork">4:00</strong></div>
+  </div>
+
+  <h3>Meine Arbeitseinheiten heute</h3>
+  <div class="workList" id="workList"></div>
+  <p class="legend">
+    Die Uhr erfasst Arbeitszeit, solange sie läuft.
+    Für echte Pausen bitte „Pause“ drücken.
+    Die Zeit wird auf diesem Gerät gespeichert.
+  </p>
 </section>
 
 <section class="panel" id="calendarSection">
@@ -128,7 +252,40 @@ footer{font-size:12px;text-align:center;color:#627484;padding:15px}
   </p>
 </section>
 
-<section class="panel">
+<section class="panel" id="reportSection">
+  <h2>📄 Mein Wochenbericht</h2>
+  <p class="muted noPrint">
+    Hier siehst du deine Tagesziele und Arbeitszeiten einer Kalenderwoche.
+    Du kannst den Bericht ausdrucken oder über den Druckdialog als PDF speichern.
+  </p>
+  <div class="field noPrint">
+    <label for="reportWeek">Kalenderwoche auswählen</label>
+    <input type="week" id="reportWeek">
+  </div>
+  <h3 id="reportTitle">Mein Wochenbericht</h3>
+  <div class="summary" id="reportSummary"></div>
+  <h3>Meine Tagesziele</h3>
+  <table class="reportTable">
+    <thead><tr><th>Tagesziel</th><th>Erreichte Tage</th></tr></thead>
+    <tbody id="reportHabits"></tbody>
+  </table>
+  <h3>Meine Projekt-Arbeitszeiten</h3>
+  <table class="reportTable">
+    <thead><tr><th>Projekt</th><th>Arbeitszeit</th></tr></thead>
+    <tbody id="reportProjects"></tbody>
+  </table>
+  <h3>Meine Tätigkeiten</h3>
+  <table class="reportTable">
+    <thead><tr><th>Tätigkeit</th><th>Arbeitszeit</th></tr></thead>
+    <tbody id="reportActivities"></tbody>
+  </table>
+  <p class="legend">Bericht aus lokal gespeicherten Einträgen erstellt.</p>
+  <div class="actions noPrint">
+    <button id="printReport">🖨️ Wochenbericht drucken / als PDF</button>
+  </div>
+</section>
+
+<section class="panel" id="dataSection">
   <h2>🔐 Meine Daten</h2>
   <p>
     Deine Einträge bleiben in diesem Browser auf diesem Gerät.
@@ -143,7 +300,7 @@ footer{font-size:12px;text-align:center;color:#627484;padding:15px}
 </section>
 </main>
 
-<footer>Version 0.2 · Privatprototyp · Keine Cloud-Synchronisierung</footer>
+<footer>Version 0.3 · Privatprototyp · Keine Cloud-Synchronisierung</footer>
 
 <script>
 "use strict";
@@ -158,34 +315,48 @@ const habits = [
   ["sleep","🛏️","Gut geschlafen","Mein persönliches Schlafziel erreicht"]
 ];
 
-// Gleicher Speichername wie Version 0.1!
 const key = "tageskompass_v1";
+const workKey = "tageskompass_work_v1";
 const el = id => document.getElementById(id);
 
-let data = {};
-try {
-  const stored = JSON.parse(localStorage.getItem(key) || "{}");
-  if (stored && typeof stored === "object" && !Array.isArray(stored)) {
-    data = stored;
+function readObject(storageKey) {
+  try {
+    const value = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      return value;
+    }
+  } catch (error) {
+    console.warn("Daten konnten nicht gelesen werden.");
   }
-} catch (error) {
-  console.warn("Gespeicherte Daten konnten nicht gelesen werden.");
+  return {};
+}
+
+let data = readObject(key);
+let workData = readObject(workKey);
+
+function saveData(storageKey,value) {
+  try {
+    localStorage.setItem(storageKey,JSON.stringify(value));
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 function iso(date) {
   const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2,"0");
+  const m = String(date.getMonth()+1).padStart(2,"0");
   const d = String(date.getDate()).padStart(2,"0");
   return `${y}-${m}-${d}`;
 }
 
 function fromIso(value) {
-  return new Date(value + "T12:00:00");
+  return new Date(value+"T12:00:00");
 }
 
-function shiftDate(value, days) {
+function shiftDate(value,days) {
   const d = fromIso(value);
-  d.setDate(d.getDate() + days);
+  d.setDate(d.getDate()+days);
   return iso(d);
 }
 
@@ -193,11 +364,34 @@ function today() {
   return iso(new Date());
 }
 
+function formatMinutes(minutes) {
+  const n = Math.max(0,Math.floor(minutes));
+  return `${Math.floor(n/60)} Std. ${String(n%60).padStart(2,"0")} Min.`;
+}
+
+function formatClock(minutes) {
+  const n = Math.max(0,Math.floor(minutes));
+  return `${Math.floor(n/60)}:${String(n%60).padStart(2,"0")}`;
+}
+
+function formatTimer(milliseconds) {
+  const seconds = Math.floor(Math.max(0,milliseconds)/1000);
+  const h = String(Math.floor(seconds/3600)).padStart(2,"0");
+  const m = String(Math.floor(seconds%3600/60)).padStart(2,"0");
+  const s = String(seconds%60).padStart(2,"0");
+  return `${h}:${m}:${s}`;
+}
+
+function dateLabel(value) {
+  return fromIso(value).toLocaleDateString("de-DE",{
+    day:"2-digit",month:"2-digit",year:"numeric"
+  });
+}
+
 let selectedDay = today();
 let visibleMonth = new Date(
   fromIso(selectedDay).getFullYear(),
-  fromIso(selectedDay).getMonth(),
-  1
+  fromIso(selectedDay).getMonth(),1
 );
 
 el("habits").innerHTML = habits.map(([k,icon,label,sub]) => `
@@ -216,8 +410,7 @@ function selectDay(value) {
   selectedDay = value;
   visibleMonth = new Date(
     fromIso(value).getFullYear(),
-    fromIso(value).getMonth(),
-    1
+    fromIso(value).getMonth(),1
   );
   load();
 }
@@ -228,20 +421,14 @@ function load() {
   el("day").max = today();
 
   habits.forEach(([k]) => {
-    el("h_" + k).checked = !!entry[k];
+    el("h_"+k).checked = !!entry[k];
   });
 
   el("note").value = entry.note || "";
   el("status").textContent = "";
   el("next").disabled = selectedDay >= today();
-
   renderCalendar();
   renderStats();
-}
-
-function hasSuccess(dateString) {
-  const entry = data[dateString];
-  return !!entry && habits.some(([k]) => !!entry[k]);
 }
 
 function renderCalendar() {
@@ -249,47 +436,44 @@ function renderCalendar() {
   const month = visibleMonth.getMonth();
 
   el("monthTitle").textContent =
-    visibleMonth.toLocaleDateString("de-DE", {
-      month:"long",
-      year:"numeric"
+    visibleMonth.toLocaleDateString("de-DE",{
+      month:"long",year:"numeric"
     });
 
-  const first = new Date(year, month, 1);
-  const offset = (first.getDay() + 6) % 7;
-  const days = new Date(year, month + 1, 0).getDate();
+  const first = new Date(year,month,1);
+  const offset = (first.getDay()+6)%7;
+  const days = new Date(year,month+1,0).getDate();
 
   const maxMonth = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth(),
-    1
+    new Date().getFullYear(),new Date().getMonth(),1
   );
+
   el("monthNext").disabled = visibleMonth >= maxMonth;
 
   const grid = el("calendar");
   grid.innerHTML = "";
 
-  for (let i = 0; i < offset; i++) {
+  for (let i=0;i<offset;i++) {
     const blank = document.createElement("span");
     blank.className = "calday blank";
     grid.appendChild(blank);
   }
 
-  for (let day = 1; day <= days; day++) {
-    const ds = iso(new Date(year, month, day));
+  for (let day=1;day<=days;day++) {
+    const ds = iso(new Date(year,month,day));
     const entry = data[ds];
     const count = entry
-      ? habits.filter(([k]) => !!entry[k]).length
-      : 0;
+      ? habits.filter(([k]) => !!entry[k]).length : 0;
 
     const button = document.createElement("button");
     button.type = "button";
     button.className = "calday";
 
-    if (count > 0) button.classList.add("saved");
-    if (ds === selectedDay) button.classList.add("selected");
-    if (ds === today()) button.classList.add("today");
+    if (count>0) button.classList.add("saved");
+    if (ds===selectedDay) button.classList.add("selected");
+    if (ds===today()) button.classList.add("today");
 
-    if (ds > today()) {
+    if (ds>today()) {
       button.disabled = true;
       button.classList.add("future");
     }
@@ -298,18 +482,17 @@ function renderCalendar() {
     number.textContent = day;
     button.appendChild(number);
 
-    if (count > 0) {
+    if (count>0) {
       const small = document.createElement("small");
       small.textContent = `${count} ✓`;
       button.appendChild(small);
     }
 
-    button.setAttribute(
-      "aria-label",
-      `${day}. ${month + 1}. ${year}, ${count} erreichte Ziele`
+    button.setAttribute("aria-label",
+      `${day}. ${month+1}. ${year}, ${count} erreichte Ziele`
     );
 
-    button.addEventListener("click", () => {
+    button.addEventListener("click",()=>{
       selectDay(ds);
       el("today").scrollIntoView({behavior:"smooth"});
     });
@@ -321,12 +504,10 @@ function renderCalendar() {
 function calculateStats(habitKey) {
   const end = today();
   const yesterday = shiftDate(end,-1);
-
   let streak = 0;
   let cursor = data[end]?.[habitKey] ? end : yesterday;
 
-  // Aktuelle Serie: heute oder gestern als Ausgangspunkt.
-  for (let i = 0; i < 36500; i++) {
+  for (let i=0;i<36500;i++) {
     if (!data[cursor]?.[habitKey]) break;
     streak++;
     cursor = shiftDate(cursor,-1);
@@ -338,17 +519,13 @@ function calculateStats(habitKey) {
   let previousSuccess = null;
 
   const dates = Object.keys(data)
-    .filter(ds => /^\d{4}-\d{2}-\d{2}$/.test(ds) && ds <= end)
+    .filter(ds=>/^\d{4}-\d{2}-\d{2}$/.test(ds) && ds<=end)
     .sort();
 
   for (const ds of dates) {
     if (!data[ds]?.[habitKey]) continue;
-
     total++;
-    run = previousSuccess === shiftDate(ds,-1)
-      ? run + 1
-      : 1;
-
+    run = previousSuccess===shiftDate(ds,-1) ? run+1 : 1;
     record = Math.max(record,run);
     previousSuccess = ds;
   }
@@ -362,7 +539,6 @@ function renderStats() {
 
   for (const [k,icon,label] of habits) {
     const s = calculateStats(k);
-
     const card = document.createElement("div");
     card.className = "stat";
 
@@ -381,63 +557,455 @@ function renderStats() {
   }
 }
 
-el("save").addEventListener("click", () => {
-  if (selectedDay > today()) return;
+el("save").addEventListener("click",()=>{
+  if (selectedDay>today()) return;
 
-  const entry = {
-    note: el("note").value
-  };
-
-  habits.forEach(([k]) => {
-    entry[k] = el("h_" + k).checked;
+  const entry = {note:el("note").value};
+  habits.forEach(([k])=>{
+    entry[k] = el("h_"+k).checked;
   });
 
   const previous = data[selectedDay];
   data[selectedDay] = entry;
 
-  try {
-    localStorage.setItem(key,JSON.stringify(data));
+  if (saveData(key,data)) {
     el("status").textContent = "✓ Erfolgreich gespeichert!";
-  } catch (error) {
-    if (previous === undefined) {
-      delete data[selectedDay];
-    } else {
-      data[selectedDay] = previous;
-    }
+  } else {
+    if (previous===undefined) delete data[selectedDay];
+    else data[selectedDay] = previous;
     el("status").textContent =
       "Speichern fehlgeschlagen. Bitte Speicherplatz prüfen.";
   }
 
   renderCalendar();
   renderStats();
+  renderReport();
 });
 
-el("day").addEventListener("change", event => {
+el("day").addEventListener("change",event=>{
   selectDay(event.target.value);
 });
 
-el("prev").addEventListener("click", () => {
+el("prev").addEventListener("click",()=>{
   selectDay(shiftDate(selectedDay,-1));
 });
 
-el("next").addEventListener("click", () => {
+el("next").addEventListener("click",()=>{
   selectDay(shiftDate(selectedDay,1));
 });
 
-el("monthPrev").addEventListener("click", () => {
+el("monthPrev").addEventListener("click",()=>{
   visibleMonth.setMonth(visibleMonth.getMonth()-1);
   renderCalendar();
 });
 
-el("monthNext").addEventListener("click", () => {
+el("monthNext").addEventListener("click",()=>{
   visibleMonth.setMonth(visibleMonth.getMonth()+1);
   renderCalendar();
 });
 
-el("export").addEventListener("click", () => {
+// Projekt-Zeiterfassung
+
+const limits = {nh:180,art:60};
+const projectNames = {
+  nh:"Nachbarschaftshilfe Ostholstein",
+  art:"Art Unikate"
+};
+
+function workDay(value) {
+  if (!workData[value] || !Array.isArray(workData[value].sessions)) {
+    workData[value] = {sessions:[]};
+  }
+  return workData[value];
+}
+
+function activeSession() {
+  const day = workData[today()];
+  if (!day || !Array.isArray(day.sessions)) return null;
+  return day.sessions.find(s=>s.state==="running" || s.state==="paused") || null;
+}
+
+function sessionMs(session,now=Date.now()) {
+  const saved = Number(session.elapsedMs)||0;
+  if (session.state==="running" && Number.isFinite(session.startedAt)) {
+    return Math.max(0,saved+Math.max(0,now-session.startedAt));
+  }
+  return Math.max(0,saved);
+}
+
+function sessionMinutes(session,now=Date.now()) {
+  return sessionMs(session,now)/60000;
+}
+
+function projectMinutes(day,project,now=Date.now()) {
+  const sessions = workData[day]?.sessions || [];
+  return sessions
+    .filter(s=>s.project===project)
+    .reduce((sum,s)=>sum+sessionMinutes(s,now),0);
+}
+
+function totalMinutes(day,now=Date.now()) {
+  return projectMinutes(day,"nh",now)+projectMinutes(day,"art",now);
+}
+
+function persistWork() {
+  const ok = saveData(workKey,workData);
+  if (!ok) {
+    el("workStatus").textContent =
+      "Speichern fehlgeschlagen. Bitte Speicherplatz prüfen.";
+  }
+  return ok;
+}
+
+function finishSession(session) {
+  if (!session) return;
+  session.elapsedMs = sessionMs(session);
+  session.startedAt = null;
+  session.state = "finished";
+  session.finishedAt = Date.now();
+}
+
+function updateWork() {
+  const now = Date.now();
+  const active = activeSession();
+  const day = today();
+
+  const nh = projectMinutes(day,"nh",now);
+  const art = projectMinutes(day,"art",now);
+  const total = nh+art;
+  const remaining = Math.max(0,240-total);
+
+  el("nhTime").textContent = formatMinutes(nh);
+  el("artTime").textContent = formatMinutes(art);
+  el("totalWork").textContent = formatClock(total);
+  el("remainingWork").textContent = formatClock(remaining);
+
+  el("nhBar").style.width = Math.min(100,nh/180*100)+"%";
+  el("artBar").style.width = Math.min(100,art/60*100)+"%";
+
+  el("nhBar").classList.toggle("warn",nh>180);
+  el("artBar").classList.toggle("warn",art>60);
+
+  el("startWork").disabled = !!active;
+  el("pauseWork").disabled = !active || active.state!=="running";
+  el("resumeWork").disabled = !active || active.state!=="paused";
+  el("finishWork").disabled = !active;
+
+  el("project").disabled = !!active;
+  el("activity").disabled = !!active;
+
+  if (active) {
+    el("timer").textContent = formatTimer(sessionMs(active,now));
+    el("timerInfo").textContent =
+      `${projectNames[active.project]} · ${active.activity} · `+
+      (active.state==="running" ? "Arbeitszeit läuft" : "Pausiert");
+  } else {
+    el("timer").textContent = "00:00:00";
+    el("timerInfo").textContent =
+      "Bereit für deine nächste Arbeitseinheit";
+  }
+
+  const hint = el("workHint");
+  hint.className = "workHint";
+
+  if (total>=240) {
+    hint.classList.add("done");
+    hint.textContent =
+      "🎉 Dein Tagesziel von vier Stunden ist erreicht. "+
+      "Zeit für Feierabend! Du darfst auch früher aufhören.";
+  } else if (nh>=180 && art>=60) {
+    hint.classList.add("done");
+    hint.textContent =
+      "Deine beiden Projektziele sind erreicht. "+
+      "Du kannst für heute Feierabend machen.";
+  } else if (nh>=180) {
+    hint.classList.add("warn");
+    hint.textContent =
+      "Die vorgesehenen drei Stunden Nachbarschaftshilfe "+
+      "sind erreicht. Denke an eine Pause oder Feierabend.";
+  } else if (art>=60) {
+    hint.classList.add("warn");
+    hint.textContent =
+      "Die vorgesehene Stunde für Art Unikate ist erreicht.";
+  } else if (active && active.state==="running" &&
+             sessionMs(active,now)>=3600000) {
+    hint.classList.add("warn");
+    hint.textContent =
+      "Du arbeitest bereits mindestens eine Stunde am Stück. "+
+      "Wie wäre es mit einer Pause?";
+  } else {
+    hint.textContent =
+      "Deine Orientierung: drei Stunden Nachbarschaftshilfe, "+
+      "eine Stunde Art Unikate, insgesamt höchstens vier Stunden. "+
+      "Du musst dieses Zeitbudget nicht ausschöpfen.";
+  }
+
+  const list = el("workList");
+  list.innerHTML = "";
+  const sessions = workData[day]?.sessions || [];
+
+  if (!sessions.length) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "Heute noch keine Arbeitszeit erfasst.";
+    list.appendChild(empty);
+  } else {
+    for (const session of [...sessions].reverse()) {
+      const item = document.createElement("div");
+      item.className = "workItem";
+
+      const heading = document.createElement("strong");
+      heading.textContent = projectNames[session.project] || session.project;
+
+      const details = document.createElement("small");
+      const stateLabel = session.state==="running"
+        ? "Läuft" : session.state==="paused" ? "Pause" : "Beendet";
+      details.textContent =
+        `${session.activity} · ${formatMinutes(sessionMinutes(session,now))} · ${stateLabel}`;
+
+      item.append(heading,details);
+      list.appendChild(item);
+    }
+  }
+}
+
+el("startWork").addEventListener("click",()=>{
+  if (activeSession()) return;
+
+  const project = el("project").value;
+  const activity = el("activity").value;
+  const day = workDay(today());
+
+  const session = {
+    project,
+    activity,
+    startedAt:Date.now(),
+    elapsedMs:0,
+    state:"running",
+    createdAt:Date.now()
+  };
+
+  day.sessions.push(session);
+
+  if (!persistWork()) {
+    day.sessions.pop();
+    return;
+  }
+
+  el("workStatus").textContent =
+    "✓ Arbeitszeit gestartet und gespeichert.";
+  updateWork();
+});
+
+el("pauseWork").addEventListener("click",()=>{
+  const session = activeSession();
+  if (!session || session.state!=="running") return;
+
+  session.elapsedMs = sessionMs(session);
+  session.startedAt = null;
+  session.state = "paused";
+
+  persistWork();
+  el("workStatus").textContent = "Ⅱ Pause – die Uhr steht.";
+  updateWork();
+  renderReport();
+});
+
+el("resumeWork").addEventListener("click",()=>{
+  const session = activeSession();
+  if (!session || session.state!=="paused") return;
+
+  session.startedAt = Date.now();
+  session.state = "running";
+
+  persistWork();
+  el("workStatus").textContent = "▶ Arbeitszeit läuft wieder.";
+  updateWork();
+});
+
+el("finishWork").addEventListener("click",()=>{
+  const session = activeSession();
+  if (!session) return;
+
+  finishSession(session);
+  persistWork();
+  el("workStatus").textContent =
+    "✓ Arbeitseinheit beendet. Gute Erholung!";
+  updateWork();
+  renderReport();
+});
+
+// Automatischer Tageswechsel bei laufender Zeiterfassung.
+function checkDayChange() {
+  for (const [day,record] of Object.entries(workData)) {
+    if (day>=today() || !Array.isArray(record?.sessions)) continue;
+
+    for (const session of record.sessions) {
+      if (session.state==="running" || session.state==="paused") {
+        const endOfDay = new Date(day+"T23:59:59.999").getTime();
+        if (session.state==="running") {
+          session.elapsedMs = sessionMs(session,endOfDay);
+        }
+        session.startedAt = null;
+        session.state = "finished";
+        session.finishedAt = endOfDay;
+      }
+    }
+  }
+  persistWork();
+}
+
+setInterval(()=>{
+  updateWork();
+},1000);
+
+// Wochenbericht
+
+function weekStart(date) {
+  const d = new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  const weekday = (d.getDay()+6)%7;
+  d.setDate(d.getDate()-weekday);
+  return d;
+}
+
+function weekValue(date) {
+  const d = new Date(Date.UTC(
+    date.getFullYear(),date.getMonth(),date.getDate()
+  ));
+  const weekday = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate()+4-weekday);
+  const year = d.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(year,0,1));
+  const week = Math.ceil((((d-yearStart)/86400000)+1)/7);
+  return `${year}-W${String(week).padStart(2,"0")}`;
+}
+
+function startFromWeek(value) {
+  const match = /^(\d{4})-W(\d{2})$/.exec(value);
+  if (!match) return weekStart(new Date());
+
+  const year = Number(match[1]);
+  const week = Number(match[2]);
+  const jan4 = new Date(year,0,4);
+  const monday = weekStart(jan4);
+  monday.setDate(monday.getDate()+(week-1)*7);
+  return monday;
+}
+
+function reportCell(row,text) {
+  const cell = document.createElement("td");
+  cell.textContent = text;
+  row.appendChild(cell);
+}
+
+function addReportRow(container,name,value) {
+  const tr = document.createElement("tr");
+  reportCell(tr,name);
+  reportCell(tr,value);
+  container.appendChild(tr);
+}
+
+function renderReport() {
+  const monday = startFromWeek(el("reportWeek").value);
+  const sunday = new Date(monday);
+  sunday.setDate(sunday.getDate()+6);
+
+  el("reportTitle").textContent =
+    `Woche vom ${dateLabel(iso(monday))} bis ${dateLabel(iso(sunday))}`;
+
+  const dates = [];
+  for (let i=0;i<7;i++) {
+    const d = new Date(monday);
+    d.setDate(d.getDate()+i);
+    dates.push(iso(d));
+  }
+
+  let successDays = 0;
+  let enteredDays = 0;
+
+  for (const day of dates) {
+    if (data[day]) enteredDays++;
+    if (data[day] && habits.some(([k])=>!!data[day][k])) {
+      successDays++;
+    }
+  }
+
+  const now = Date.now();
+  let nh = 0;
+  let art = 0;
+  const activities = {};
+
+  for (const day of dates) {
+    for (const session of workData[day]?.sessions || []) {
+      const minutes = sessionMinutes(session,now);
+      if (session.project==="nh") nh += minutes;
+      if (session.project==="art") art += minutes;
+      activities[session.activity] =
+        (activities[session.activity]||0)+minutes;
+    }
+  }
+
+  const summary = el("reportSummary");
+  summary.innerHTML = "";
+
+  const summaryItems = [
+    ["Erfasste Tage",`${enteredDays} von 7`],
+    ["Erfolgstage",`${successDays} von 7`],
+    ["Computerzeit",formatMinutes(nh+art)],
+    ["Projektbudget",`${formatMinutes(4*60*7)} / Woche`]
+  ];
+
+  for (const [label,value] of summaryItems) {
+    const box = document.createElement("div");
+    const text = document.createElement("span");
+    text.textContent = label;
+    const number = document.createElement("strong");
+    number.textContent = value;
+    box.append(text,number);
+    summary.appendChild(box);
+  }
+
+  const habitBody = el("reportHabits");
+  habitBody.innerHTML = "";
+  for (const [key,icon,label] of habits) {
+    const count = dates.filter(day=>!!data[day]?.[key]).length;
+    addReportRow(habitBody,`${icon} ${label}`,`${count} von 7`);
+  }
+
+  const projectBody = el("reportProjects");
+  projectBody.innerHTML = "";
+  addReportRow(projectBody,"Nachbarschaftshilfe Ostholstein",formatMinutes(nh));
+  addReportRow(projectBody,"Art Unikate",formatMinutes(art));
+  addReportRow(projectBody,"Gesamt",formatMinutes(nh+art));
+
+  const activityBody = el("reportActivities");
+  activityBody.innerHTML = "";
+  const activityEntries = Object.entries(activities)
+    .sort((a,b)=>b[1]-a[1]);
+
+  if (!activityEntries.length) {
+    addReportRow(activityBody,"Noch keine Arbeitszeiten","0 Min.");
+  } else {
+    for (const [name,minutes] of activityEntries) {
+      addReportRow(activityBody,name,formatMinutes(minutes));
+    }
+  }
+}
+
+el("reportWeek").value = weekValue(new Date());
+el("reportWeek").addEventListener("change",renderReport);
+el("printReport").addEventListener("click",()=>{
+  renderReport();
+  window.print();
+});
+
+// Datensicherung: Tagesziele und Arbeitszeiten
+
+el("export").addEventListener("click",()=>{
   const backup = {
-    version:1,
-    entries:data
+    version:2,
+    entries:data,
+    work:workData
   };
 
   const blob = new Blob(
@@ -454,14 +1022,14 @@ el("export").addEventListener("click", () => {
   link.click();
   link.remove();
 
-  setTimeout(() => URL.revokeObjectURL(url),5000);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
 });
 
-el("importButton").addEventListener("click", () => {
+el("importButton").addEventListener("click",()=>{
   el("import").click();
 });
 
-el("import").addEventListener("change", async event => {
+el("import").addEventListener("change",async event=>{
   const file = event.target.files[0];
   if (!file) return;
 
@@ -469,28 +1037,45 @@ el("import").addEventListener("change", async event => {
     const backup = JSON.parse(await file.text());
 
     if (
-      backup.version !== 1 ||
+      ![1,2].includes(backup.version) ||
       !backup.entries ||
-      typeof backup.entries !== "object" ||
+      typeof backup.entries!=="object" ||
       Array.isArray(backup.entries)
     ) {
       throw new Error("Ungültiges Sicherungsformat");
     }
 
     if (!confirm(
-      "Datensicherung einlesen? Vorhandene Einträge mit gleichem Datum werden überschrieben."
-    )) {
-      return;
-    }
+      "Datensicherung einlesen? Vorhandene Einträge mit gleichem Datum "+
+      "werden überschrieben."
+    )) return;
 
     const merged = {...data,...backup.entries};
-    localStorage.setItem(key,JSON.stringify(merged));
+
+    if (!saveData(key,merged)) {
+      throw new Error("Speichern fehlgeschlagen");
+    }
+
     data = merged;
+
+    if (backup.version===2 && backup.work &&
+        typeof backup.work==="object" &&
+        !Array.isArray(backup.work)) {
+      const mergedWork = {...workData,...backup.work};
+      if (!saveData(workKey,mergedWork)) {
+        throw new Error("Arbeitszeiten konnten nicht gespeichert werden");
+      }
+      workData = mergedWork;
+    }
+
     load();
+    checkDayChange();
+    updateWork();
+    renderReport();
 
     alert("Datensicherung erfolgreich eingelesen!");
   } catch (error) {
-    alert("Die Sicherung konnte nicht eingelesen werden.");
+    alert("Die Sicherung konnte nicht vollständig eingelesen werden.");
   } finally {
     event.target.value = "";
   }
@@ -498,10 +1083,13 @@ el("import").addEventListener("change", async event => {
 
 // Vorhandenen Service Worker weiterverwenden.
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch(() => {});
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
 }
 
+checkDayChange();
 load();
+updateWork();
+renderReport();
 </script>
 </body>
 </html>
